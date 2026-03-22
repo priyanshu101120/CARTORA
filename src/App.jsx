@@ -6,6 +6,7 @@ import Cart from "./Components/Cart/Cart";
 import Home from "./Components/Home/Home";
 import ContactForm from "./Components/pages/contact";
 import Footer from "./Components/layout/Footer";
+import Checkout from "./Components/pages/Checkout";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/contact" element={<ContactForm />} />
         <Route path="/:category" element={<ProductsGrid />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Routes>
       <Footer />
     </>

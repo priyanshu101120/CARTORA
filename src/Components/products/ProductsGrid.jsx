@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { CATEGORIES } from "../../Redux/Features/category/category";
 import { useDispatch, useSelector } from "react-redux";
-
 import { fetchProducts } from "../../Services/ProducetAPI";
 import {
   seterror,
@@ -9,76 +8,83 @@ import {
   setproducts,
 } from "../../Redux/Features/Products/ProductSlice";
 import ProductsCard from "./ProductsCard";
-import Navbar from "../layout/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
 import Pagination from "../pages/Pagination";
 
 const ProductsGrid = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { category } = useParams();
+
   const { products, loading, error } = useSelector((state) => state.products);
-  {
-    /* pagination states */
-  }
+
+  // 🔢 Pagination State
   const [currentPage, setcurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentItems = products.slice(startIndex, endIndex);
-
-  const { category } = useParams();
-
-  const navigate = useNavigate();
-
+  // 🔥 Fetch Products
   useEffect(() => {
-    if (category) {
-      handleFetchProducts(category);
-      setcurrentPage(1);
-    } else {
-      handleFetchProducts();
-    }
-  }, [category]);
+    const getProducts = async () => {
+      try {
+        dispatch(setloading(true));
+        const data = await fetchProducts(category);
+        dispatch(setproducts(data));
+        setcurrentPage(1);
+      } catch (error) {
+        dispatch(seterror(error.message));
+      } finally {
+        dispatch(setloading(false));
+      }
+    };
 
-  const dispatch = useDispatch();
+    getProducts();
+  }, [category, dispatch]);
 
-  const handleFetchProducts = async (category) => {
-    try {
-      dispatch(setloading(true));
-      const data = await fetchProducts(category);
-      dispatch(setproducts(data));
-    } catch (error) {
-      dispatch(seterror(error.message));
-    } finally {
-      dispatch(setloading(false));
-    }
-  };
+  // 🔥 Memoized Pagination
+  const { currentItems, totalPages } = useMemo(() => {
+    const totalPages = Math.ceil(products.length / itemsPerPage);
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
 
+    return {
+      totalPages,
+      currentItems: products.slice(start, end),
+    };
+  }, [products, currentPage]);
+
+  // ⏳ Loading
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
+
+  // ❌ Error
   if (error) {
     return <div className="text-center mt-10">Error: {error}</div>;
   }
 
   return (
     <div>
-      <div className=" sticky top-16 h-20 bg-white/10 backdrop-blur-md p-2 z-40 flex gap-8  pl-[8vw] flex-wrap">
+      {/* 🧭 Category Bar */}
+      <div className="sticky top-12 z-40 bg-white/80 backdrop-blur-md px-44 py-4 flex gap-6 overflow-x-auto">
         {CATEGORIES.map((cat) => (
           <button
             key={cat}
             onClick={() => navigate(`/${cat}`)}
-            className="px-3 py-1 border rounded"
+            className={`px-3 py-1 text-sm border rounded whitespace-nowrap ${
+              category === cat ? "bg-black text-white" : "bg-white"
+            }`}
           >
             {cat}
           </button>
         ))}
       </div>
-      <div className="max-w-5xl mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {/* <button onClick={handleFetchProducts}>get products</button> */}
+
+      {/* 🛍 Product Grid */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
         {currentItems?.map((product, index) => (
           <ProductsCard
             key={index}
@@ -86,7 +92,9 @@ const ProductsGrid = () => {
           />
         ))}
       </div>
-      {category && (
+
+      {/* 📄 Pagination */}
+      {totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
