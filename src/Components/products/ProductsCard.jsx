@@ -1,71 +1,45 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  addToCart,
-  increaseQty,
-  decreaseQty,
-} from "../../Redux/Features/cart/cartSlice";
+import ProductCartButton from "./ProductCartButton";
+import { useLocation } from "react-router-dom";
 
 const ProductsCard = ({ product }) => {
-  const dispatch = useDispatch();
-
-  const cartItems = useSelector((state) => state.cart.cartItems);
-  const cartItem = cartItems.find((item) => item.id === product.id);
-
+  const location = useLocation();
+  const truncateText = (text, wordLimit = 4) => {
+    const words = text.split(" ");
+    if (words.length <= wordLimit) return text;
+    return words.slice(0, wordLimit).join(" ") + "...";
+  };
   return (
-    <div className="bg-white shadow-sm rounded-xl p-3 sm:p-4 flex flex-col h-full hover:shadow-lg transition">
-      {/* 🖼 Image */}
-      <div className="w-full h-40 sm:h-48 flex items-center justify-center rounded-lg overflow-hidden">
+    <div className="group relative w-full h-72 rounded-[20px] overflow-visible border-2 border-[#c3c6ce] transition-all duration-500 ease-out hover:border-black hover:shadow-[0_4px_18px_rgba(0,0,0,0.25)]">
+      {/* Image */}
+      <div className="absolute inset-0 rounded-[20px] overflow-hidden">
         <img
           src={product.Image}
-          alt={product.Description}
-          className="w-full h-full object-contain"
+          alt=""
+          className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
         />
       </div>
 
-      {/* 📄 Content */}
-      <div className="flex flex-col flex-1 mt-3">
-        <h2 className="text-sm sm:text-base font-semibold line-clamp-1">
-          {product.Brand}
-        </h2>
+      {/* Overlay (for readability) */}
+      <div className="absolute inset-0 rounded-[px] bg-linear-to-t from-black/70 to-transparent z-1" />
 
-        <p className="text-gray-600 text-xs sm:text-sm mt-1 line-clamp-2 min-h-10">
-          {product.Description}
+      {/* Text (BOTTOM FIXED) */}
+      <div className="absolute bottom-0 left-0 w-full p-3 z-10 text-white">
+        <p className="text-sm font-bold">{product.Brand}</p>
+
+        <p className="text-xs">
+          {location.pathname === "/laptops" || location.pathname === "/mobiles"
+            ? truncateText(product.Description, 4)
+            : product.Description}
         </p>
+      </div>
 
-        {/* 💰 Bottom */}
-        <div className="mt-auto flex items-center justify-between gap-2">
-          <span className="text-base sm:text-lg font-bold">
-            {product.Price}
-          </span>
-
-          {!cartItem ? (
-            <button
-              onClick={() => dispatch(addToCart(product))}
-              className="h-9 px-4 flex items-center justify-center bg-black text-white rounded-lg text-xs sm:text-sm hover:bg-gray-800 active:scale-95 transition"
-            >
-              Add to Cart
-            </button>
-          ) : (
-            <div className="h-9 flex items-center gap-2 bg-gray-100 px-2 rounded-lg">
-              <button
-                onClick={() => dispatch(decreaseQty(product.id))}
-                className="px-2 text-sm font-bold"
-              >
-                -
-              </button>
-
-              <span className="text-sm font-medium">{cartItem.quantity}</span>
-
-              <button
-                onClick={() => dispatch(increaseQty(product.id))}
-                className="px-2 text-sm font-bold"
-              >
-                +
-              </button>
-            </div>
-          )}
-        </div>
+      {/* Button */}
+      <div
+        className="absolute left-1/2 -translate-x-1/2 bottom-0  w-[60%] translate-y-[120%] 
+        opacity-0 transition-all duration-300 ease-out text-white
+        group-hover:translate-y-[60%] group-hover:opacity-100 z-30"
+      >
+        <ProductCartButton product={product} />
       </div>
     </div>
   );

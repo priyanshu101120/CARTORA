@@ -10,6 +10,7 @@ import {
 import ProductsCard from "./ProductsCard";
 import { useNavigate, useParams } from "react-router-dom";
 import Pagination from "../pages/Pagination";
+import Loader from "../pages/Loader";
 
 const ProductsGrid = () => {
   const dispatch = useDispatch();
@@ -55,8 +56,8 @@ const ProductsGrid = () => {
   // ⏳ Loading
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[70vh]">
-        <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex items-center justify-center scale-250 min-h-[30vh]">
+        <Loader />
       </div>
     );
   }
@@ -84,7 +85,7 @@ const ProductsGrid = () => {
       </div>
 
       {/* 🛍 Product Grid */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  sm:gap-6">
         {currentItems?.map((product, index) => (
           <ProductsCard
             key={index}
