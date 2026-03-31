@@ -29,7 +29,11 @@ const ProductsGrid = () => {
       try {
         dispatch(setloading(true));
         const data = await fetchProducts(category);
-        dispatch(setproducts(data));
+        const normalizedProducts = (Array.isArray(data) ? data : []).map((item, index) => ({
+          ...item,
+          id: item.id ?? index + 1,
+        }));
+        dispatch(setproducts(normalizedProducts));
         setcurrentPage(1);
       } catch (error) {
         dispatch(seterror(error.message));
@@ -88,8 +92,8 @@ const ProductsGrid = () => {
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  sm:gap-6">
         {currentItems?.map((product, index) => (
           <ProductsCard
-            key={index}
-            product={{ ...product, id: product.Image + index }}
+            key={product.id ?? index}
+            product={product}
           />
         ))}
       </div>

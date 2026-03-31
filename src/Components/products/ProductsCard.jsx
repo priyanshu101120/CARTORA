@@ -1,15 +1,19 @@
 import ProductCartButton from "./ProductCartButton";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ProductsCard = ({ product }) => {
+  const navigate = useNavigate();
+
   const location = useLocation();
+
   const truncateText = (text, wordLimit = 4) => {
     const words = text.split(" ");
     if (words.length <= wordLimit) return text;
     return words.slice(0, wordLimit).join(" ") + "...";
   };
+
   return (
-    <div className="group relative w-full h-72 rounded-[20px] overflow-visible border-2 border-[#c3c6ce] transition-all duration-500 ease-out hover:border-black hover:shadow-[0_4px_18px_rgba(0,0,0,0.25)]">
+    <div className="group relative w-full h-72 rounded-[20px] overflow-visible border-2 border-[#c3c6ce] transition-all duration-500 ease-out hover:border-black hover:shadow-[0_4px_18px_rgba(0,0,0,0.25)] cursor-pointer">
       {/* Image */}
       <div className="absolute inset-0 rounded-[20px] overflow-hidden">
         <img
@@ -20,10 +24,13 @@ const ProductsCard = ({ product }) => {
       </div>
 
       {/* Overlay (for readability) */}
-      <div className="absolute inset-0 rounded-[px] bg-linear-to-t from-black/70 to-transparent z-1" />
+      <div onClick={() => navigate(`/product/${product.id}`)} className="absolute inset-0 rounded-[20px] bg-linear-to-t from-black/70 to-transparent z-1" />
 
       {/* Text (BOTTOM FIXED) */}
-      <div className="absolute bottom-0 left-0 w-full p-3 z-10 text-white">
+      <div
+        
+        className="absolute bottom-0 left-0 w-full p-3 z-10 text-white"
+      >
         <p className="text-sm font-bold">{product.Brand}</p>
 
         <p className="text-xs">

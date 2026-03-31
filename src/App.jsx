@@ -7,6 +7,7 @@ import Home from "./Components/Home/Home";
 import ContactForm from "./Components/pages/contact";
 import Footer from "./Components/layout/Footer";
 import Checkout from "./Components/pages/Checkout";
+import SingleProduct from "./Components/pages/SingleProduct";
 
 const App = () => {
   return (
@@ -18,8 +19,10 @@ const App = () => {
         <Route path="/:category" element={<ProductsGrid />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/product/:id" element={<SingleProduct />} />
       </Routes>
       <Footer />
+      
     </>
   );
 };

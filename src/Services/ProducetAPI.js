@@ -16,7 +16,7 @@ export const fetchProducts = async (category,) => {
     );
 
 
-    console.log(response.data);
+
     return response.data;
 
 
