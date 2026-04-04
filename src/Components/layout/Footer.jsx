@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FaFacebook } from "react-icons/fa";
+import { FaInstagram } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -7,7 +9,10 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {/* Logo + About */}
         <div className="col-span-2 md:col-span-1">
-          <h2 className="text-xl sm:text-2xl font-bold mb-3">CARTORA</h2>
+          <Link to="/" className="text-xl sm:text-2xl font-bold mb-3">
+            CARTORA
+          </Link>
+
           <p className="text-gray-400 text-xs sm:text-sm leading-relaxed">
             Your one-stop destination for fashion, electronics, and more. Shop
             smart, live better.
@@ -47,7 +52,11 @@ const Footer = () => {
         <div>
           <h3 className="font-semibold mb-3 text-sm sm:text-base">Support</h3>
           <ul className="space-y-2 text-gray-400 text-xs sm:text-sm">
-            <li className="hover:text-white cursor-pointer">Contact Us</li>
+            <li>
+              <Link to="/contact" className="hover:text-white cursor-pointer">
+                Contact Us
+              </Link>
+            </li>
             <li className="hover:text-white cursor-pointer">Help Center</li>
             <li className="hover:text-white cursor-pointer">Returns</li>
             <li className="hover:text-white cursor-pointer">Privacy Policy</li>
@@ -69,9 +78,11 @@ const Footer = () => {
               placeholder="Enter email"
               className="px-3 py-2 w-full text-black rounded-md sm:rounded-l-md sm:rounded-r-none outline-none text-sm"
             />
-            <button className="bg-blue-500 px-4 py-2 rounded-md sm:rounded-l-none sm:rounded-r-md hover:bg-blue-600 active:scale-95 transition text-sm">
-              Subscribe
-            </button>
+            <div className="flex items-center justify-center gap-2 px-4 py-2 rounded-md sm:rounded-l-none sm:rounded-r-md">
+              follow us
+              <FaFacebook />
+              <FaInstagram />
+            </div>
           </div>
         </div>
       </div>

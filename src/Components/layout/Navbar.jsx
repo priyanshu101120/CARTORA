@@ -1,10 +1,38 @@
 import React, { useState, useMemo } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
+import { supabase } from "../../supabase/supabase";
+import Auth from "../pages/Auth";
 
 const Navbar = () => {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  
+
+  const [user, setUser] = useState(null);
+
+  const [open, setOpen] = useState(false);
+
+  const logoutUser = async () => {
+    await supabase.auth.signOut();
+  };
+
+  useEffect(() => {
+    // current session
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user || null);
+    });
+
+    // listen for changes (login/logout)
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user || null);
+      },
+    );
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
 
   const { products } = useSelector((state) => state.products);
   const { cartItems } = useSelector((state) => state.cart);
@@ -32,7 +60,7 @@ const Navbar = () => {
       : "pb-1 hover:text-gray-300 hover:scale-115 transition-transform";
 
   return (
-    <nav className="sticky top-0 z-50 bg-black text-white px-3 py-2 flex items-center gap-14">
+    <nav className="sticky top-0 z-50 bg-black text-white px-3 py-2 flex items-center gap-10">
       {/* Logo */}
       <NavLink
         to="/"
@@ -129,6 +157,40 @@ const Navbar = () => {
           </span>
         )}
       </NavLink>
+
+      <div className=" shadow">
+        {user ? (
+          <div
+            className="relative"
+            onClick={() => setOpen((prev) => !prev)}
+          >
+            {/* Avatar Circle */}
+            <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center cursor-pointer">
+              {user.email[0].toUpperCase()}
+            </div>
+
+            {/* Dropdown */}
+            {open && (
+              <div className="absolute right-2 mt-3 w-40 bg-gray-100 shadow-lg rounded-lg  transition-all duration-300">
+                <p className="text-sm text-black  mb-2 ">{user.email}</p>
+                <button
+                  onClick={() => logoutUser()}
+                  className="w-full text-left text-red-500  p-2 rounded"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-black text-white px-4 py-2 rounded"
+          >
+            Login
+          </button>
+        )}
+      </div>
     </nav>
   );
 };
